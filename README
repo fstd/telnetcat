@@ -1,13 +1,58 @@
 This is telnetcat, version 0.0.0
 telnet scrape base
 
-Quickstart:
-run ./autogen.sh to setup the autohell
-afterwards, usual ./configure ; make ; make install stuff applies
+General idea
+============
+
+Telnetcat connects to a telnet server and renders the received data to an
+off-screen buffer.  Whenever that buffer reaches a steady state for a
+user-selectable timespan, it is dumped to stdout.  User input provided
+on standard input is handed back to the telnet server.
+
+This is supposed to facilitate screen-scraping of telnet connections.
+
+
+Internal Data flow
+==================
+
+(from user) --> userinput.c --> core (telnetcat.c) <--> telnet.c <--> (server)
+                                         |
+                                         |
+                                         |                     /-/--> ansiseq.c
+                                         |                     | |
+                                         \--> term.c --\       | v
+                                                       |\---> vt100.c ----\
+                                                       |       |           \
+                                                       \       v            |
+                                                       |\---> xterm.c ----\ |
+                                                       |                   \|
+                                                       |                    V
+                                                       |    ....more....    |
+                                                       |    (see terms.h)   |
+                                                       |                    |
+                                                       \                    |
+                                                        \---> nullterm.c -\ |
+                                                                           \|
+                                                                            V
+(to user) <------- screen.c <-----------------------------------------------/
+
+
+Dependencies
+============
+
+We need libsrsbsns devel branch as of Dec 19, 2015
+(https://github.com/srsbsns/libsrsbsns)
+
+
+
+Building:
+===========
+./autogen.sh && ./configure && make && make install
+
 
 See INSTALL for generic autohell compile/install instructions.
+See COPYING for license information
+
 
 (C) 2015 Timo Buhrmester <van.fstd@gmail.com>
 Contact: #fstd on irc.freenode.org
-
-See COPYING for license information
