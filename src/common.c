@@ -49,3 +49,12 @@ write_all(int fd, const uint8_t *data, size_t len)
 
 	return true;
 }
+
+char
+hexchar(int d)
+{
+	if (d < 0 || d >= 16)
+		C("out of range: %d", d);
+
+	return d + (d < 10 ? '0' : 'A' - 10);
+}

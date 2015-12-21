@@ -22,6 +22,6 @@
 void *xmalloc(size_t sz);
 uint64_t millisecs(void);
 bool write_all(int fd, const uint8_t *data, size_t len);
-
+char hexchar(int d);
 
 #endif /* TELNETCAT_COMMON_H */
