@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include <err.h>
 
@@ -183,10 +184,24 @@ screen_fill_rect(size_t x1, size_t y1, size_t x2, size_t y2, uint8_t ch)
 }
 
 void
-screen_output(void)
+screen_output(bool human)
 {
-	for (size_t y = 0; y < s_scr->height; y++)
-		puts((const char *)s_scr->canvas[y]);
+	printf("I %"PRIu64" %zu %zu %zu %zu\n",
+	    millisecs(), s_scr->width, s_scr->height, s_curx, s_cury);
+
+	for (size_t y = 0; y < s_scr->height; y++) {
+		printf("L\t%zu\t", y);
+		for (size_t x = 0; x < s_scr->width; x++)
+			if (human)
+				putchar(s_scr->canvas[y][x]);
+			else
+				printf("%c%c%c%c",
+				    hexchar(s_scr->attr[y][x].attr),
+				    hexchar(s_scr->attr[y][x].fgcol),
+				    hexchar(s_scr->attr[y][x].bgcol),
+				    s_scr->canvas[y][x]);
+		puts("");
+	}
 }
 
 bool

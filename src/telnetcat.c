@@ -42,6 +42,7 @@ static unsigned    s_idletime = DEF_IDLETIME;
 static char        s_host[256];
 static uint16_t    s_port = DEF_PORT;
 static const char *s_termtype = DEF_TERMTYPE;
+static bool        s_human;
 
 
 static void process_args(int *argc, char ***argv);
@@ -73,7 +74,7 @@ process_args(int *argc, char ***argv)
 {
 	char *a0 = (*argv)[0];
 
-	for(int ch; (ch = getopt(*argc, *argv, "W:H:t:i:lcvqh")) != -1;) {
+	for(int ch; (ch = getopt(*argc, *argv, "W:H:t:i:lncvqh")) != -1;) {
 		switch (ch) {
 		case 'W':
 			if (!(s_width = STRTOSZ(optarg)))
@@ -86,6 +87,9 @@ process_args(int *argc, char ***argv)
 		case 'l':
 			term_dumpnames();
 			exit(0);
+		case 'n':
+			s_human = true;
+			break;
 		case 'c':
 			update_logger(0, 1);
 			break;
@@ -209,7 +213,7 @@ main(int argc, char **argv)
 			 * we last printed it, output it. */
 			if (!tcanread && !printed && millisecs() >= lastdata + s_idletime) {
 				if (screen_changed())
-					screen_output();
+					screen_output(s_human);
 
 				printed = true;
 			}
