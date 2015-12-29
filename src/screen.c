@@ -186,7 +186,7 @@ screen_fill_rect(size_t x1, size_t y1, size_t x2, size_t y2, uint8_t ch)
 void
 screen_output(bool human)
 {
-	printf("I %"PRIu64" %zu %zu %zu %zu\n",
+	printf("I\t%"PRIu64"\t%zu\t%zu\t%zu\t%zu\n",
 	    millisecs(), s_scr->width, s_scr->height, s_curx, s_cury);
 
 	for (size_t y = 0; y < s_scr->height; y++) {
