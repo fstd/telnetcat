@@ -175,6 +175,7 @@ update_logger(int verb, int fancy)
 int
 main(int argc, char **argv)
 {
+	setvbuf(stdout, (char *)NULL, _IOLBF, 0);
 	init(&argc, &argv);
 
 	if (!telnet_connect(s_host, s_port, s_width, s_height, s_termtype))
