@@ -26,6 +26,8 @@ static void termop_curdown(struct ansiseq *s);
 static void termop_curleft(struct ansiseq *s);
 static void termop_curright(struct ansiseq *s);
 static void termop_curup(struct ansiseq *s);
+static void termop_setcurrow(struct ansiseq *s);
+static void termop_setcurcol(struct ansiseq *s);
 static void termop_dblwidth(struct ansiseq *s);
 static void termop_eraseindisplay(struct ansiseq *s);
 static void termop_eraseinline(struct ansiseq *s);
@@ -111,6 +113,9 @@ xterm_attach(struct term_if *ifc)
 	ansiseq_register('[', 'r', termop_scrollregion);
 	ansiseq_register('[', 'h', termop_setmode);
 	ansiseq_register('[', 'l', termop_resetmode);
+
+	ansiseq_register('[', 'd', termop_setcurrow);
+	ansiseq_register('[', 'G', termop_setcurcol);
 
 	/* the below sequences are all unsupported, but registered
 	 * anyway to provide appropriate warning messages */
@@ -243,6 +248,18 @@ static void
 termop_curdown(struct ansiseq *s)
 {
 	screen_go(0, 1);
+}
+
+static void
+termop_setcurrow(struct ansiseq *s)
+{
+	screen_goto(-1, !s->argv[0] || s->argv[0] == ABSENT ? 0 : s->argv[0] - 1);
+}
+
+static void
+termop_setcurcol(struct ansiseq *s)
+{
+	screen_goto(!s->argv[0] || s->argv[0] == ABSENT ? 0 : s->argv[0] - 1, -1);
 }
 
 static void
