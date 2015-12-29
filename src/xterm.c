@@ -364,40 +364,48 @@ termop_setattr(struct ansiseq *s)
 	}
 
 	for (int i = 0; i < s->argc; i++) {
-		uint8_t curattr, curfgcol, curbgcol;
+		if (s->argv[i] >= 30 && s->argv[i] <= 37) {
+			screen_setattr(-1, s->argv[i] - 30, -1);
+		} else if (s->argv[i] >= 40 && s->argv[i] <= 47) {
+			screen_setattr(-1, -1, s->argv[i] - 40);
+		} else {
+			uint8_t curattr, curfgcol, curbgcol;
 
-		screen_getattr(&curattr, &curfgcol, &curbgcol);
+			screen_getattr(&curattr, &curfgcol, &curbgcol);
 
-		switch (s->argv[i]) {
-		case 0:
-			curattr = 0;
-			break;
-		case 1:
-			curattr |= 1 << ATTR_BOLD;
-			break;
-		case 4:
-			curattr |= 1 << ATTR_ULINE;
-			break;
-		case 5:
-			curattr |= 1 << ATTR_BLINK;
-			break;
-		case 7:
-			curattr |= 1 << ATTR_INV;
-			break;
-		case 27:
-			curattr &= ~(1 << ATTR_INV);
-			break;
-		case 39:
-			curfgcol = DEF_FGCOL;
-			break;
-		case 49:
-			curbgcol = DEF_BGCOL;
-			break;
-		default:
-			W("unsupported m code %d", s->argv[i]);
+			switch (s->argv[i]) {
+			case 0:
+				curattr = 0;
+				curfgcol = DEF_FGCOL;
+				curbgcol = DEF_BGCOL;
+				break;
+			case 1:
+				curattr |= 1 << ATTR_BOLD;
+				break;
+			case 4:
+				curattr |= 1 << ATTR_ULINE;
+				break;
+			case 5:
+				curattr |= 1 << ATTR_BLINK;
+				break;
+			case 7:
+				curattr |= 1 << ATTR_INV;
+				break;
+			case 27:
+				curattr &= ~(1 << ATTR_INV);
+				break;
+			case 39:
+				curfgcol = DEF_FGCOL;
+				break;
+			case 49:
+				curbgcol = DEF_BGCOL;
+				break;
+			default:
+				W("unsupported m code %d", s->argv[i]);
+			}
+
+			screen_setattr(curattr, curfgcol, curbgcol);
 		}
-
-		screen_setattr(curattr, curfgcol, curbgcol);
 	}
 }
 
